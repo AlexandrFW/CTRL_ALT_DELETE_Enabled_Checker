@@ -1,6 +1,6 @@
 ﻿namespace CTRL_ALT_DELETE_Enabled_Checker
 {
-    partial class Service1
+    partial class CheckerService
     {
         /// <summary> 
         /// Required designer variable.
