@@ -16,7 +16,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
             this.CanStop = true;
             this.CanPauseAndContinue = true;
-            this.AutoLog = true;
+            this.AutoLog = true;           
         }
 
         protected override void OnStart(string[] args)
@@ -29,6 +29,13 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
         protected override void OnStop()
         {
+            isCheckerNeedRun = false;
+            if (threadChecker.IsAlive)
+            {
+                threadChecker.Abort();
+                Thread.Sleep(6000);
+                threadChecker = null;
+            }
         }
 
 

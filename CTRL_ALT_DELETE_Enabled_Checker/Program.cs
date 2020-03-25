@@ -20,6 +20,8 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
                 new CheckerService()
             };
             ServiceBase.Run(ServicesToRun);
+
+            //ServiceController sc = new ServiceController();
         }
     }
 }
