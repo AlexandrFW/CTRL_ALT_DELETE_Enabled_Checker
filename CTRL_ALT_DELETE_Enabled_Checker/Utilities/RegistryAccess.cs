@@ -5,7 +5,10 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 {
     public class RegistryAccess
     {
-        #region Первоначальный узел реестра
+        #region Первоначальный узел реестра        
+        /// <summary>
+        /// The base registry key
+        /// </summary>
         public static RegistryKey baseRegistryKey = Registry.LocalMachine;
         #endregion
 
