@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CTRL_ALT_DELETE_Enabled_Checker.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -60,7 +61,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\Checker.cs" />
+    <Compile Include="Utilities\ICommandInterface.cs" />
     <Compile Include="Utilities\RegistryAccess.cs" />
+    <Compile Include="Utilities\RegistryProcessing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

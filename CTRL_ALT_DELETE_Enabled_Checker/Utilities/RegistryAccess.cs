@@ -3,25 +3,51 @@
 
 namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 {
+    /// <summary>
+    /// Class reciever 
+    /// </summary>
     public class RegistryAccess
     {
-        #region Первоначальный узел реестра        
+
+        #region Конструктор        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistryAccess"/> class.
+        /// </summary>
+        public RegistryAccess() { }
+        #endregion
+
+
+        #region Первоначальный узел реестра 
         /// <summary>
         /// The base registry key
         /// </summary>
-        public static RegistryKey baseRegistryKey = Registry.LocalMachine;
+        public RegistryKey BaseRegistryKey { get; set; } = Registry.LocalMachine;
         #endregion
 
-        #region Значения SubKey
-        public static string subKey = "";
+        #region Значения SubKey   
+        /// <summary>
+        /// The sub key of the specified registry branch 
+        /// </summary>        
+        public string SubKey { get; set; } = "";
         #endregion
 
-        #region Метод получения значений реестра
-        public static string GetRegisterValue(string sKeyName)
+        #region Значения SubKey   
+        /// <summary>
+        /// The key of the specified registry value
+        /// </summary>        
+        public string SKeyName { get; set; } = "";
+        #endregion
+
+        #region Метод получения значений реестра        
+        /// <summary>
+        /// Gets the register value.
+        /// </summary>
+        /// <returns></returns>
+        public string GetRegisterValue()
         {
-            RegistryKey rk = baseRegistryKey;
+            RegistryKey rk = BaseRegistryKey;
             // Open a subKey as read-only
-            RegistryKey sk1 = rk.OpenSubKey(subKey);
+            RegistryKey sk1 = rk.OpenSubKey(SubKey);
 
             if (sk1 == null)
             {
@@ -31,7 +57,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
             {
                 try
                 {
-                    string s_result = (string)sk1.GetValue(sKeyName.ToUpper());
+                    string s_result = (string)sk1.GetValue(SKeyName.ToUpper());
                     return s_result;
                 }
                 catch { return "NULL"; }
@@ -39,19 +65,24 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         }
         #endregion
 
-        #region Метод записи значений реестра
-        public static bool SetRegisterValue(string sKeyName, object Value)
+        #region Метод записи значений реестра        
+        /// <summary>
+        /// Sets the register value
+        /// </summary>
+        /// <param name="Value">The value that should be written</param>
+        /// <returns></returns>
+        public bool SetRegisterValue(object Value)
         {
             try
             {
                 // Setting
-                RegistryKey rk = baseRegistryKey;
+                RegistryKey rk = BaseRegistryKey;
                 // I have to use CreateSubKey 
                 // (create or open it if already exits), 
                 // 'cause OpenSubKey open a subKey as read-only
-                RegistryKey sk1 = rk.CreateSubKey(subKey);
+                RegistryKey sk1 = rk.CreateSubKey(SubKey);
                 // Save the value
-                sk1.SetValue(sKeyName.ToUpper(), Value);
+                sk1.SetValue(SKeyName.ToUpper(), Value);
 
                 return true;
             }
