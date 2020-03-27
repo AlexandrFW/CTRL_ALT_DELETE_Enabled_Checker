@@ -115,7 +115,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 
         #region Метод записи значений реестра        
         /// <summary>
-        /// Sets the register value by array enumeration
+        /// Sets the register value by enumeration an array values (Inside one registry subkey only)
         /// </summary>
         /// <returns></returns>
         public bool SetRegisterValue()
