@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
-
+using System;
+using System.Security.Permissions;
+using System.Security.Principal;
 
 namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 {
@@ -13,7 +15,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="RegistryAccess"/> class.
         /// </summary>
-        public RegistryAccess() { }
+        public RegistryAccess() { System.AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal); }
         #endregion
 
 
@@ -118,6 +120,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// Sets the register value by enumeration an array values (Inside one registry subkey only)
         /// </summary>
         /// <returns></returns>
+        //[PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]
         public bool SetRegisterValue()
         {
             try
@@ -133,12 +136,13 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
                 for (int i = 0; i < SValueNames.Length; i++)
                 {
                     sk1.SetValue(SValueNames[i], OValues[i]);
+                    //Console.WriteLine($"Value name: {SValueNames[i]}, Value: {OValues[i]}"); // Для тестирования
                 }
                 sk1.Close();
 
                 return true;
             }
-            catch { return false; }
+            catch (Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
         }
         #endregion
     }

@@ -10,6 +10,12 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
     public class RegistryProcessingAutoLogon : ICommandInterface
     {
         private RegistryAccess registryAccess;
+
+        /// <summary>
+        /// The is registry overwrritten successfuly = TRUE
+        /// </summary>
+        public bool IsRegistryOverwrritten = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RegistryProcessing"/> class (Constructor)
         /// </summary>
@@ -20,7 +26,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// </summary>
         public void Execute()
         {
-            registryAccess.SetRegisterValue();
+            IsRegistryOverwrritten = registryAccess.SetRegisterValue();
         }
 
         /// <summary>
