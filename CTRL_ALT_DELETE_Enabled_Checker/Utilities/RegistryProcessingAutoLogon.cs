@@ -7,24 +7,20 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
     /// <summary>
     /// Class for executing commands which make operations with registry 
     /// </summary>
-    public class RegistryProcessing : ICommandInterface
+    public class RegistryProcessingAutoLogon : ICommandInterface
     {
         private RegistryAccess registryAccess;
         /// <summary>
         /// Initializes a new instance of the <see cref="RegistryProcessing"/> class (Constructor)
         /// </summary>
-        public RegistryProcessing(RegistryAccess registryAccess) { this.registryAccess = registryAccess; }
+        public RegistryProcessingAutoLogon(RegistryAccess registryAccess) { this.registryAccess = registryAccess; }
 
         /// <summary>
         /// Executes commands which will be defined in users class
         /// </summary>
         public void Execute()
         {
-            string s_disable_param = registryAccess.GetRegisterValue();
-            if(Convert.ToInt32(s_disable_param) == 0)
-            {
-                registryAccess.SetRegisterValue(1);
-            }
+            registryAccess.SetRegisterValue();
         }
 
         /// <summary>

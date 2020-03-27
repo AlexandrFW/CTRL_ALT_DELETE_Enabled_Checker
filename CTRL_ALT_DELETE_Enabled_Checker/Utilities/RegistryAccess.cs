@@ -38,6 +38,27 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         public string SKeyName { get; set; } = "";
         #endregion
 
+        #region Значения Value
+        /// <summary>
+        /// The value of the specified registry that should be installed
+        /// </summary>        
+        public object OValue { get; set; } = "";
+        #endregion
+
+        #region Массив имён Values
+        /// <summary>
+        /// The array of value names of the specified registry that should be installed
+        /// </summary>        
+        public string[] SValueNames { get; set; }
+        #endregion
+
+        #region Массив значений Values
+        /// <summary>
+        /// The array of values of the specified registry that should be installed
+        /// </summary>        
+        public object[] OValues { get; set; }
+        #endregion
+
         #region Метод получения значений реестра        
         /// <summary>
         /// Gets the register value.
@@ -83,6 +104,37 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
                 RegistryKey sk1 = rk.CreateSubKey(SubKey);
                 // Save the value
                 sk1.SetValue(SKeyName.ToUpper(), Value);
+                sk1.Close();
+
+                return true;
+            }
+            catch { return false; }
+        }
+        #endregion
+
+
+        #region Метод записи значений реестра        
+        /// <summary>
+        /// Sets the register value by array enumeration
+        /// </summary>
+        /// <returns></returns>
+        public bool SetRegisterValue()
+        {
+            try
+            {
+                // Setting
+                RegistryKey rk = BaseRegistryKey;
+                // I have to use CreateSubKey 
+                // (create or open it if already exits), 
+                // 'cause OpenSubKey open a subKey as read-only
+                RegistryKey sk1 = rk.CreateSubKey(SubKey);
+                // Save the value
+
+                for (int i = 0; i < SValueNames.Length; i++)
+                {
+                    sk1.SetValue(SValueNames[i], OValues[i]);
+                }
+                sk1.Close();
 
                 return true;
             }

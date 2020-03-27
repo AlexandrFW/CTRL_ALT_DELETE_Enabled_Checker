@@ -64,11 +64,14 @@
     <Compile Include="Utilities\Checker.cs" />
     <Compile Include="Utilities\ICommandInterface.cs" />
     <Compile Include="Utilities\RegistryAccess.cs" />
+    <Compile Include="Utilities\RegistryProcessingAutoLogon.cs" />
     <Compile Include="Utilities\RegistryProcessing.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utilities\JSON\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

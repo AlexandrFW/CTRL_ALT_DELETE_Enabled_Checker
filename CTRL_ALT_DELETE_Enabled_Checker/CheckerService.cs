@@ -14,6 +14,14 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private string subKey = @"\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
         private string sValueName = "disablecad";
 
+        private string subKeyAutoLogon = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon";
+        private string sDefaultDomainName = "DefaultDomainName";
+        private string sDefaultUserName = "DefaultUserName";
+        private string sDefaultPassword = "DefaultPassword";
+        private string sAutoAdminLogon = "AutoAdminLogon";
+        private string sForceAutoLogon = "ForceAutoLogon";
+        private string sPowerdownAfterShutdown = "PowerdownAfterShutdown";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CheckerService"/> class.
         /// </summary>
@@ -55,12 +63,21 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
         private void CheckRegisterValue()
         {
+            // Блок проверки активности состояния входа чарез CTRL+ALT+DELETE, если активно - отключаем
             Checker checker = new Checker();
             RegistryAccess regAccess = new RegistryAccess();
             regAccess.BaseRegistryKey = Registry.LocalMachine;
             regAccess.SubKey = subKey;
             regAccess.SKeyName = sValueName;
             checker.SetCommand(new RegistryProcessing(regAccess));
+
+            Checker checkerAutoLogon = new Checker();
+            RegistryAccess regAccessAutoLogon = new RegistryAccess();
+            regAccessAutoLogon.BaseRegistryKey = Registry.LocalMachine;
+            regAccessAutoLogon.SubKey = subKeyAutoLogon;
+            regAccessAutoLogon.SValueNames = new string[] { sDefaultDomainName, sDefaultUserName, sDefaultPassword, sAutoAdminLogon, sForceAutoLogon, sPowerdownAfterShutdown };
+            regAccessAutoLogon.OValues = new object[] {"GAMMA", "qalab", "Klin2013", "1", "1", "1" };
+            checkerAutoLogon.SetCommand(new RegistryProcessingAutoLogon(regAccessAutoLogon));
 
 
             while (isCheckerNeedRun)
@@ -70,7 +87,9 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
                 //    Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "disablecad", 1);
                 //}
 
-                checker.StartCheckRegister(); // Проверка и отключение 
+                checker.StartCheckRegister();            // Проверка и отключение 
+
+                checkerAutoLogon.StartCheckRegister();
 
                 Thread.Sleep(5000);
             }
