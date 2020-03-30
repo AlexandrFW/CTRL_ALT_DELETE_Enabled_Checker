@@ -1,8 +1,4 @@
-﻿using System;
-
-
-
-namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
+﻿namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 {
     /// <summary>
     /// Class for executing commands which make operations with registry 
@@ -15,11 +11,16 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// The is registry overwrritten successfuly = TRUE
         /// </summary>
         public bool IsRegistryOverwrritten = false;
+        private Log logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegistryProcessing"/> class (Constructor)
         /// </summary>
-        public RegistryProcessingAutoLogon(RegistryAccess registryAccess) { this.registryAccess = registryAccess; }
+        public RegistryProcessingAutoLogon(RegistryAccess registryAccess, Log logger)
+        {
+            this.registryAccess = registryAccess;
+            this.logger = logger;
+        }
 
         /// <summary>
         /// Executes commands which will be defined in users class
@@ -27,6 +28,9 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         public void Execute()
         {
             IsRegistryOverwrritten = registryAccess.SetRegisterValue();
+
+            if (!IsRegistryOverwrritten)
+                logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" Values is " + (IsRegistryOverwrritten ? "overwritten" : "not overwritten"));
         }
 
         /// <summary>
@@ -34,8 +38,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// </summary>
         public void Undo()
         {
-            
-        }
 
+        }
     }
 }

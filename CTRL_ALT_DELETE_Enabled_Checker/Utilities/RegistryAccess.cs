@@ -15,7 +15,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="RegistryAccess"/> class.
         /// </summary>
-        public RegistryAccess() { System.AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal); }
+        public RegistryAccess() { /* System.AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal); */ }
         #endregion
 
 
@@ -69,21 +69,22 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         public string GetRegisterValue()
         {
             RegistryKey rk = BaseRegistryKey;
+
             // Open a subKey as read-only
             RegistryKey sk1 = rk.OpenSubKey(SubKey);
 
             if (sk1 == null)
             {
-                return "NULL";
+                return "NOT_OPENED";
             }
             else
             {
                 try
                 {
-                    string s_result = (string)sk1.GetValue(SKeyName.ToUpper());
-                    return s_result;
+                    int nResult = (int)sk1.GetValue(SKeyName.ToUpper());
+                    return nResult.ToString().Trim();
                 }
-                catch { return "NULL"; }
+                catch { return "ERROR"; }
             }
         }
         #endregion
@@ -130,19 +131,26 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
                 // I have to use CreateSubKey 
                 // (create or open it if already exits), 
                 // 'cause OpenSubKey open a subKey as read-only
-                RegistryKey sk1 = rk.CreateSubKey(SubKey);
+                RegistryKey sk1 = rk.OpenSubKey(SubKey, true);
                 // Save the value
+
+                //string sKeyName = BaseRegistryKey + @"\" + SubKey;
+
+                if (sk1 == null)
+                    return false;
 
                 for (int i = 0; i < SValueNames.Length; i++)
                 {
-                    sk1.SetValue(SValueNames[i], OValues[i]);
+                    //Registry.SetValue(sKeyName, SValueNames[i].Trim(), OValues[i], RegistryValueKind.String);
+                    sk1.SetValue(SValueNames[i], OValues[i], RegistryValueKind.String);
                     //Console.WriteLine($"Value name: {SValueNames[i]}, Value: {OValues[i]}"); // Для тестирования
                 }
+
                 sk1.Close();
 
                 return true;
             }
-            catch (Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
+            catch { return false; }//(Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
         }
         #endregion
     }

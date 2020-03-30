@@ -11,7 +11,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private Thread threadChecker = null;
         private bool isCheckerNeedRun = false;
 
-        private string subKey = @"\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
+        private string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
         private string sValueName = "disablecad";
 
         private string subKeyAutoLogon = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon";
@@ -21,6 +21,8 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private string sAutoAdminLogon = "AutoAdminLogon";
         private string sForceAutoLogon = "ForceAutoLogon";
         private string sPowerdownAfterShutdown = "PowerdownAfterShutdown";
+
+        private Log logger = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CheckerService"/> class.
@@ -63,21 +65,24 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
         private void CheckRegisterValue()
         {
+            if (logger == null)
+                logger = new Log();
+
             // Блок проверки активности состояния входа чарез CTRL+ALT+DELETE, если активно - отключаем
             Checker checker = new Checker();
             RegistryAccess regAccess = new RegistryAccess();
             regAccess.BaseRegistryKey = Registry.LocalMachine;
             regAccess.SubKey = subKey;
             regAccess.SKeyName = sValueName;
-            checker.SetCommand(new RegistryProcessing(regAccess));
+            checker.SetCommand(new RegistryProcessing(regAccess, logger));
 
             Checker checkerAutoLogon = new Checker();
             RegistryAccess regAccessAutoLogon = new RegistryAccess();
             regAccessAutoLogon.BaseRegistryKey = Registry.LocalMachine;
             regAccessAutoLogon.SubKey = subKeyAutoLogon;
             regAccessAutoLogon.SValueNames = new string[] { sDefaultDomainName, sDefaultUserName, sDefaultPassword, sAutoAdminLogon, sForceAutoLogon, sPowerdownAfterShutdown };
-            regAccessAutoLogon.OValues = new object[] {"GAMMA", "qalab", "Klin2013", "1", "1", "1" };
-            checkerAutoLogon.SetCommand(new RegistryProcessingAutoLogon(regAccessAutoLogon));
+            regAccessAutoLogon.OValues = new object[] {"GAMMA", "qalab", "Klin2013", 1, 1, 1 };
+            checkerAutoLogon.SetCommand(new RegistryProcessingAutoLogon(regAccessAutoLogon, logger));
 
 
             while (isCheckerNeedRun)

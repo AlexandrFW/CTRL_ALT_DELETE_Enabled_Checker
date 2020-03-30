@@ -10,14 +10,18 @@ namespace UnitTest_CAD_Project
     [TestClass]
     public class RegistryAccessTest
     {
+        Log logger = null;
         /// <summary>
         /// You should run Visual Studio as an Administrator to be able to pass the test
         /// If you try to 
         /// </summary>
         [TestMethod]
-        //[PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]
+        //[PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]       
         public void TestRegistryOverwritting()
-        {
+        {            
+            if (logger == null)
+                logger = new Log();
+
             string subKeyAutoLogon = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon";
             string sDefaultDomainName = "DefaultDomainName";
             string sDefaultUserName = "DefaultUserName";
@@ -31,9 +35,9 @@ namespace UnitTest_CAD_Project
             regAccessAutoLogon.BaseRegistryKey = Registry.LocalMachine;
             regAccessAutoLogon.SubKey = subKeyAutoLogon;
             regAccessAutoLogon.SValueNames = new string[] { sDefaultDomainName, sDefaultUserName, sDefaultPassword, sAutoAdminLogon, sForceAutoLogon, sPowerdownAfterShutdown };
-            regAccessAutoLogon.OValues = new object[] { "GAMMA", "qalab", "Klin2013", "1", "1", "1" };
+            regAccessAutoLogon.OValues = new object[] { "GAMMA", "qalab", "Klin2013", 1, 1, 1 };
 
-            RegistryProcessingAutoLogon rpAuto = new RegistryProcessingAutoLogon(regAccessAutoLogon);
+            RegistryProcessingAutoLogon rpAuto = new RegistryProcessingAutoLogon(regAccessAutoLogon, logger);
             checkerAutoLogon.SetCommand(rpAuto);
 
             checkerAutoLogon.StartCheckRegister();
