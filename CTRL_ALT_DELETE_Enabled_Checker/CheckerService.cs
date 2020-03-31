@@ -106,8 +106,8 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
             Checker checkerScreenSaver = new Checker();
             RegistryAccess regAccessScreenSaver = new RegistryAccess();
-            regAccessScreenSaver.BaseRegistryKey = Registry.LocalMachine;
-            regAccessScreenSaver.SubKey = subKeyAutoLogon;
+            regAccessScreenSaver.BaseRegistryKey = Registry.CurrentUser;
+            regAccessScreenSaver.SubKey = subKeyScreenSaver;
             regAccessScreenSaver.SValueNames = new string[] { sScreenSaveActive, sScreenSaveTimeOut, sScreenSaverIsSecure, sSCRNSAVE };
             regAccessScreenSaver.OValues = new object[] { "0", "99999", "0", "logon.scr" };
             checkerScreenSaver.SetCommand(new RegistryProcessingAutoLogon(regAccessScreenSaver, logger));
