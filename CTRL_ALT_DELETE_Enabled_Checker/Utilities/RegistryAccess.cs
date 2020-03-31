@@ -153,5 +153,21 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
             catch { return false; }//(Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
         }
         #endregion
+
+        #region Удаление не нужных ключей        
+        /// <summary>
+        /// Deletes the keys array
+        /// </summary>       
+        public void DeleteKeysArray()
+        {
+            RegistryKey rk = BaseRegistryKey;
+            RegistryKey sk1 = rk.OpenSubKey(SubKey, true);
+
+            // удаляем значение из ключа
+            foreach (string s in SValueNames)
+                sk1.DeleteValue(s);
+            sk1.Close();
+        }
+        #endregion 
     }
 }

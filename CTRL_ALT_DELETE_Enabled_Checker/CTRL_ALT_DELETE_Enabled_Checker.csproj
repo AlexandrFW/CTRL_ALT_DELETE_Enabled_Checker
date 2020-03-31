@@ -100,6 +100,7 @@
     <Compile Include="Utilities\ICommandInterface.cs" />
     <Compile Include="Utilities\Log.cs" />
     <Compile Include="Utilities\RegistryAccess.cs" />
+    <Compile Include="Utilities\RegistryProcessingDeleteVal.cs" />
     <Compile Include="Utilities\RegistryProcessingAutoLogon.cs" />
     <Compile Include="Utilities\RegistryProcessing.cs" />
   </ItemGroup>

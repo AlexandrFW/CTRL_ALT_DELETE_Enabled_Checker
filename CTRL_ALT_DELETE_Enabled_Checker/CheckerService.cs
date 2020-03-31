@@ -11,9 +11,11 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private Thread threadChecker = null;
         private bool isCheckerNeedRun = false;
 
+        // Отключение CTRL+ALT+DELETE при входе
         private string subKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System";
         private string sValueName = "disablecad";
 
+        // Параметры autologon
         private string subKeyAutoLogon = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon";
         private string sDefaultDomainName = "DefaultDomainName";
         private string sDefaultUserName = "DefaultUserName";
@@ -21,6 +23,12 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private string sAutoAdminLogon = "AutoAdminLogon";
         private string sForceAutoLogon = "ForceAutoLogon";
         private string sPowerdownAfterShutdown = "PowerdownAfterShutdown";
+
+        // Отключение экрана Legal Notice
+        private string sLegalNoticeCaption = "legalnoticecaption";
+        private string sLegalNoticeText = "legalnoticetext";
+
+
 
         private Log logger = null;
 
@@ -84,6 +92,13 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             regAccessAutoLogon.OValues = new object[] {"GAMMA", "qalab", "Klin2013", 1, 1, 1 };
             checkerAutoLogon.SetCommand(new RegistryProcessingAutoLogon(regAccessAutoLogon, logger));
 
+            Checker checkerDeleteVal = new Checker();
+            RegistryAccess regAccessDeleteVal = new RegistryAccess();
+            regAccessDeleteVal.BaseRegistryKey = Registry.LocalMachine;
+            regAccessDeleteVal.SubKey = subKey;
+            regAccessDeleteVal.SValueNames = new string[] { sLegalNoticeCaption, sLegalNoticeText };
+            checkerDeleteVal.SetCommand(new RegistryProcessingDeleteVal(regAccessDeleteVal, logger));
+
 
             while (isCheckerNeedRun)
             {
@@ -94,7 +109,9 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
                 checker.StartCheckRegister();            // Проверка и отключение 
 
-                checkerAutoLogon.StartCheckRegister();
+                checkerAutoLogon.StartCheckRegister();   // Установка параметров автологона
+
+                checkerDeleteVal.StartCheckRegister();   // Удаление параметров экрана Legal Notice
 
                 Thread.Sleep(5000);
             }
