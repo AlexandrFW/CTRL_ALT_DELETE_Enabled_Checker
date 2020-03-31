@@ -24,11 +24,16 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
         private string sForceAutoLogon = "ForceAutoLogon";
         private string sPowerdownAfterShutdown = "PowerdownAfterShutdown";
 
-        // Отключение экрана Legal Notice
+        // Отключение экрана Legal Notice перед входом в систему
         private string sLegalNoticeCaption = "legalnoticecaption";
         private string sLegalNoticeText = "legalnoticetext";
 
-
+        // Отключение засыпания экрана
+        private string subKeyScreenSaver = @"SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop";
+        private string sScreenSaveActive = "ScreenSaveActive";
+        private string sScreenSaveTimeOut = "ScreenSaveTimeOut";
+        private string sScreenSaverIsSecure = "ScreenSaverIsSecure";
+        private string sSCRNSAVE = "SCRNSAVE.EXE";
 
         private Log logger = null;
 
@@ -99,6 +104,13 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             regAccessDeleteVal.SValueNames = new string[] { sLegalNoticeCaption, sLegalNoticeText };
             checkerDeleteVal.SetCommand(new RegistryProcessingDeleteVal(regAccessDeleteVal, logger));
 
+            Checker checkerScreenSaver = new Checker();
+            RegistryAccess regAccessScreenSaver = new RegistryAccess();
+            regAccessScreenSaver.BaseRegistryKey = Registry.LocalMachine;
+            regAccessScreenSaver.SubKey = subKeyAutoLogon;
+            regAccessScreenSaver.SValueNames = new string[] { sScreenSaveActive, sScreenSaveTimeOut, sScreenSaverIsSecure, sSCRNSAVE };
+            regAccessScreenSaver.OValues = new object[] { "0", "99999", "0", "logon.scr" };
+            checkerScreenSaver.SetCommand(new RegistryProcessingAutoLogon(regAccessScreenSaver, logger));
 
             while (isCheckerNeedRun)
             {
@@ -112,6 +124,8 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
                 checkerAutoLogon.StartCheckRegister();   // Установка параметров автологона
 
                 checkerDeleteVal.StartCheckRegister();   // Удаление параметров экрана Legal Notice
+
+                checkerScreenSaver.StartCheckRegister(); // Отключение экрана блокировки
 
                 Thread.Sleep(5000);
             }
