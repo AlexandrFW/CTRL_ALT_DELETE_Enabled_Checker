@@ -82,6 +82,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
                 logger = new Log();
 
             // Блок проверки активности состояния входа чарез CTRL+ALT+DELETE, если активно - отключаем
+            #region Объекты обработки команд по изменению параметров в реестре
             Checker checker = new Checker();
             RegistryAccess regAccess = new RegistryAccess();
             regAccess.BaseRegistryKey = Registry.LocalMachine;
@@ -99,7 +100,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
 
             Checker checkerDeleteVal = new Checker();
             RegistryAccess regAccessDeleteVal = new RegistryAccess();
-            regAccessDeleteVal.BaseRegistryKey = Registry.LocalMachine;
+            regAccessDeleteVal.BaseRegistryKey = Registry.LocalMachine; 
             regAccessDeleteVal.SubKey = subKey;
             regAccessDeleteVal.SValueNames = new string[] { sLegalNoticeCaption, sLegalNoticeText };
             checkerDeleteVal.SetCommand(new RegistryProcessingDeleteVal(regAccessDeleteVal, logger));
@@ -111,24 +112,44 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             regAccessScreenSaver.SValueNames = new string[] { sScreenSaveActive, sScreenSaveTimeOut, sScreenSaverIsSecure, sSCRNSAVE };
             regAccessScreenSaver.OValues = new object[] { "0", "99999", "0", "logon.scr" };
             checkerScreenSaver.SetCommand(new RegistryProcessingAutoLogon(regAccessScreenSaver, logger));
+            #endregion
 
             while (isCheckerNeedRun)
             {
-                //if (Convert.ToInt32(Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "disablecad", 0)) == 0)
-                //{
-                //    Registry.SetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "disablecad", 1);
-                //}
-
                 checker.StartCheckRegister();            // Проверка и отключение 
+
+                Thread.Sleep(200);
 
                 checkerAutoLogon.StartCheckRegister();   // Установка параметров автологона
 
+                Thread.Sleep(200);
+
                 checkerDeleteVal.StartCheckRegister();   // Удаление параметров экрана Legal Notice
 
-                checkerScreenSaver.StartCheckRegister(); // Отключение экрана блокировки
+                // Thread.Sleep(200);
+
+                // checkerScreenSaver.StartCheckRegister(); // Отключение экрана блокировки
 
                 Thread.Sleep(5000);
             }
+
+            // Откат изменений при остановке службы
+            checker.ReverseCheckerChanges();
+
+            // Удаление параметров Autologon при остановке сервиса
+            RegistryProcessingAutoLogon rpal = new RegistryProcessingAutoLogon(regAccessScreenSaver, logger);
+            rpal.bIsAutoLogonReverse = true;
+            checkerScreenSaver.SetCommand(rpal);
+            checkerAutoLogon.ReverseCheckerChanges();
+
+            /* Не работает под LocalSystem
+            // Восстановление Default Screen Saver
+            regAccessScreenSaver.OValues = new object[] { "1", "900", "1", "RB Screensaver.scr" };
+            rpal = new RegistryProcessingAutoLogon(regAccessScreenSaver, logger);
+            rpal.bIsAutoLogonReverse = true;
+            checkerScreenSaver.SetCommand(rpal);
+            checkerAutoLogon.ReverseCheckerChanges();
+            */
         }
     }
 }

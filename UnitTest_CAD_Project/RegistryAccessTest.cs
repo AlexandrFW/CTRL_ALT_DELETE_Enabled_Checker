@@ -1,9 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿
 
-using CTRL_ALT_DELETE_Enabled_Checker;
 using CTRL_ALT_DELETE_Enabled_Checker.Utilities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Win32;
-using System.Security.Permissions;
 
 namespace UnitTest_CAD_Project
 {
@@ -46,5 +45,35 @@ namespace UnitTest_CAD_Project
             Assert.AreEqual(true, IsOverwrittingSuccess);
         }
 
+
+        [TestMethod]
+        //[PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]       
+        public void TestScreenSaverRegistryOverwritting()
+        {
+            if (logger == null)
+                logger = new Log();
+
+           string subKeyScreenSaver = @"SOFTWARE\Policies\Microsoft\Windows\Control Panel\Desktop";
+           string sScreenSaveActive = "ScreenSaveActive";
+           string sScreenSaveTimeOut = "ScreenSaveTimeOut";
+           string sScreenSaverIsSecure = "ScreenSaverIsSecure"; 
+           string sSCRNSAVE = "SCRNSAVE.EXE";
+
+            Checker checkerScreenSaver = new Checker();
+            RegistryAccess regAccessScreenSaver = new RegistryAccess();
+            regAccessScreenSaver.BaseRegistryKey = Registry.CurrentUser;
+            regAccessScreenSaver.SubKey = subKeyScreenSaver;
+            regAccessScreenSaver.SValueNames = new string[] { sScreenSaveActive, sScreenSaveTimeOut, sScreenSaverIsSecure, sSCRNSAVE };
+            regAccessScreenSaver.OValues = new object[] { "0", "99999", "0", "logon.scr" };
+            checkerScreenSaver.SetCommand(new RegistryProcessingAutoLogon(regAccessScreenSaver, logger));
+
+            RegistryProcessingAutoLogon rpAuto = new RegistryProcessingAutoLogon(regAccessScreenSaver, logger);
+            checkerScreenSaver.SetCommand(rpAuto);
+
+            checkerScreenSaver.StartCheckRegister();
+
+            bool IsOverwrittingSuccess = rpAuto.IsRegistryOverwrritten;
+            Assert.AreEqual(true, IsOverwrittingSuccess);
+        }
     }
 }

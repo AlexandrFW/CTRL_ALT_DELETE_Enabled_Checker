@@ -14,6 +14,11 @@
         private Log logger;
 
         /// <summary>
+        /// The flag for automatic logon reverse
+        /// </summary>
+        public bool bIsAutoLogonReverse = true;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RegistryProcessing"/> class (Constructor)
         /// </summary>
         public RegistryProcessingAutoLogon(RegistryAccess registryAccess, Log logger)
@@ -30,7 +35,9 @@
             IsRegistryOverwrritten = registryAccess.SetRegisterValue();
 
             if (!IsRegistryOverwrritten)
-                logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" Values is " + (IsRegistryOverwrritten ? "overwritten" : "not overwritten"));
+                logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" Values is " + (IsRegistryOverwrritten ? "overwritten" : "not overwritten") + "\r\n" + registryAccess.s);
+
+            registryAccess.s = "";
         }
 
         /// <summary>
@@ -38,7 +45,18 @@
         /// </summary>
         public void Undo()
         {
+            if (bIsAutoLogonReverse)
+            {
+                registryAccess.DeleteKeysArray();
+            }
+            else
+            {
+                IsRegistryOverwrritten = registryAccess.SetRegisterValue();
 
+                if (!IsRegistryOverwrritten)
+                    logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" Values is " + (IsRegistryOverwrritten ? "reversed" : "not reversed") + "\r\n" + registryAccess.s);
+                registryAccess.s = "";
+            }
         }
     }
 }

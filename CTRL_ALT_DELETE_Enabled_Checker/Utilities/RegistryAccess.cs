@@ -117,6 +117,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
 
 
         #region Метод записи значений реестра        
+        public string s = "";
         /// <summary>
         /// Sets the register value by enumeration an array values (Inside one registry subkey only)
         /// </summary>
@@ -137,20 +138,23 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
                 //string sKeyName = BaseRegistryKey + @"\" + SubKey;
 
                 if (sk1 == null)
+                {
+                    s = "sk1 = null;   " + BaseRegistryKey.Name;
                     return false;
+                }
 
                 for (int i = 0; i < SValueNames.Length; i++)
                 {
                     //Registry.SetValue(sKeyName, SValueNames[i].Trim(), OValues[i], RegistryValueKind.String);
                     sk1.SetValue(SValueNames[i], OValues[i], RegistryValueKind.String);
-                    //Console.WriteLine($"Value name: {SValueNames[i]}, Value: {OValues[i]}"); // Для тестирования
+                    //Console.WriteLine($"Value name: {SValueNames[i]}, Value: {OValues[i]}"); // Для тестирования                   
                 }
 
                 sk1.Close();
 
                 return true;
             }
-            catch { return false; }//(Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
+            catch (Exception ex) { s = ex.Message; return false; }//{ return false; }//(Exception ex) { Console.WriteLine(ex.Message); Console.WriteLine(ex.StackTrace); return false; }
         }
         #endregion
 

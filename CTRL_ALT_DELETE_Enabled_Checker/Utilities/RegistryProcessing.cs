@@ -51,7 +51,13 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// </summary>
         public void Undo()
         {
-            
+            bool bIsRegisterSet = true;
+            bIsRegisterSet = registryAccess.SetRegisterValue(0);
+            if (!bIsRegisterSet)
+            {
+                logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" = " + bIsRegisterSet);
+                return;
+            }
         }
 
     }
