@@ -69,8 +69,9 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             isCheckerNeedRun = false;
             if (threadChecker.IsAlive)
             {
+                Thread.Sleep(10000);
+
                 threadChecker.Abort();
-                Thread.Sleep(6000);
                 threadChecker = null;
             }
         }
@@ -101,7 +102,7 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             Checker checkerDeleteVal = new Checker();
             RegistryAccess regAccessDeleteVal = new RegistryAccess();
             regAccessDeleteVal.BaseRegistryKey = Registry.LocalMachine; 
-            regAccessDeleteVal.SubKey = subKey;
+            regAccessDeleteVal.SubKey = subKeyAutoLogon;
             regAccessDeleteVal.SValueNames = new string[] { sLegalNoticeCaption, sLegalNoticeText };
             checkerDeleteVal.SetCommand(new RegistryProcessingDeleteVal(regAccessDeleteVal, logger));
 
@@ -136,10 +137,12 @@ namespace CTRL_ALT_DELETE_Enabled_Checker
             // Откат изменений при остановке службы
             checker.ReverseCheckerChanges();
 
+            Thread.Sleep(200);
+
             // Удаление параметров Autologon при остановке сервиса
-            RegistryProcessingAutoLogon rpal = new RegistryProcessingAutoLogon(regAccessScreenSaver, logger);
+            RegistryProcessingAutoLogon rpal = new RegistryProcessingAutoLogon(regAccessAutoLogon, logger);
             rpal.bIsAutoLogonReverse = true;
-            checkerScreenSaver.SetCommand(rpal);
+            checkerAutoLogon.SetCommand(rpal);
             checkerAutoLogon.ReverseCheckerChanges();
 
             /* Не работает под LocalSystem

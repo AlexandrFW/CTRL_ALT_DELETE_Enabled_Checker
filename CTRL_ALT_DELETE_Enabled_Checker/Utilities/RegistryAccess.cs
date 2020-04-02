@@ -162,15 +162,25 @@ namespace CTRL_ALT_DELETE_Enabled_Checker.Utilities
         /// <summary>
         /// Deletes the keys array
         /// </summary>       
-        public void DeleteKeysArray()
+        public bool DeleteKeysArray()
         {
+            bool bResult = false;
+
             RegistryKey rk = BaseRegistryKey;
             RegistryKey sk1 = rk.OpenSubKey(SubKey, true);
 
             // удаляем значение из ключа
-            foreach (string s in SValueNames)
-                sk1.DeleteValue(s);
-            sk1.Close();
+            try
+            {
+                foreach (string s in SValueNames)
+                    sk1.DeleteValue(s);
+                sk1.Close();
+
+                bResult = true;
+            }
+            catch (Exception ex) { s = ex.Message; bResult = false; }
+
+            return bResult;
         }
         #endregion 
     }

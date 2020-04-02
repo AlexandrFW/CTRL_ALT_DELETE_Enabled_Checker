@@ -47,7 +47,13 @@
         {
             if (bIsAutoLogonReverse)
             {
+                //string s = "";
+
+                //foreach (string _s in registryAccess.SValueNames)
+                //    s = s + _s + "\r\n";
+
                 registryAccess.DeleteKeysArray();
+                logger.LogMessageViaEventLog(registryAccess.BaseRegistryKey + @"\" + registryAccess.SubKey + @"\" + registryAccess.SKeyName + @" Autologon values has been deleted; Service stopped\r\n");// + s);
             }
             else
             {
